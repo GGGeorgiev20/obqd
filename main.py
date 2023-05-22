@@ -6,6 +6,7 @@ import browsers.firefox as firefox
 
 import time
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -42,8 +43,19 @@ def login(driver, email, passwd):
     shift_tab.perform()
     enter.perform()
 
-def update():
-    time.sleep(1)
+def pick_menu(driver, menu):
+    driver.find_element(By.XPATH, f'//input[@type="checkbox" and @id="AvailablePackets_{menu}__Selected"]').click()
+    driver.find_element(By.XPATH, '//input[@type="submit"]').click()
+
+def order_lunch(driver):
+    while(True):
+        try:
+            button = driver.find_element(By.XPATH, '//tr[./td[@class="alert-danger"]]/td/a[@class="btn btn-primary"]')
+        except NoSuchElementException:
+            break
+        
+        button.click()
+        pick_menu(driver, 0)
 
 def main():
     URL = "https://menu.codingburgas.bg"
@@ -60,10 +72,7 @@ def main():
 
     login(driver, email, passwd)
 
-
-    while 1:
-        update()
-
+    order_lunch(driver)
 
     driver.quit()
 
