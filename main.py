@@ -1,47 +1,71 @@
+import account
+import settings
+
+import browsers.chrome as chrome
+import browsers.firefox as firefox
+
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 
-chrome_options = Options()
-chrome_options.add_argument("--incognito")
+def get_browser_driver():
+    browser = settings.get_browser()
 
-chromedriver_path = "./chromedriver"
+    if browser == "chrome":
+        return chrome.get_driver()
+    elif browser == "firefox":
+        return firefox.get_driver()
+    else:
+        raise Exception("Unknown browser!")
 
-driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
+def login(driver, email, passwd):
+    email_element = (By.XPATH, '//input[@type="email" and @name="loginfmt"]')
+    passwd_element = (By.XPATH, '//input[@type="password" and @name="passwd"]')
+    next_element = (By.XPATH, '//input[@type="submit" and @id="idSIButton9"]')
 
-url = "https://menu.codingburgas.bg"
-driver.get(url)
+    enter = ActionChains(driver)
+    shift_tab = ActionChains(driver)
 
-login_button = driver.find_element(By.XPATH, '//button[text()="Office 365"]')
-login_button.click()
+    enter.send_keys(Keys.ENTER)
+    shift_tab.key_down(Keys.SHIFT).send_keys(Keys.TAB).key_up(Keys.SHIFT)
 
-email = ""
-passwd = ""
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(email_element)).send_keys(email)
 
-email_element = (By.XPATH, '//input[@type="email" and @name="loginfmt"]')
-passwd_element = (By.XPATH, '//input[@type="password" and @name="passwd"]')
-next_element = (By.XPATH, '//input[@type="submit" and @id="idSIButton9"]')
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(next_element)).click()
 
-enter = ActionChains(driver)
-shift_tab = ActionChains(driver)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(passwd_element)).send_keys(passwd)
 
-enter.send_keys(Keys.ENTER)
-shift_tab.key_down(Keys.SHIFT).send_keys(Keys.TAB).key_up(Keys.SHIFT)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(next_element)).click()
+    shift_tab.perform()
+    enter.perform()
 
-WebDriverWait(driver, 10).until(EC.element_to_be_clickable(email_element)).send_keys(email)
+def update():
+    time.sleep(1)
 
-WebDriverWait(driver, 10).until(EC.element_to_be_clickable(next_element)).click()
+def main():
+    URL = "https://menu.codingburgas.bg"
+    driver = get_browser_driver()
 
-WebDriverWait(driver, 10).until(EC.element_to_be_clickable(passwd_element)).send_keys(passwd)
+    driver.get(URL)
 
-WebDriverWait(driver, 10).until(EC.element_to_be_clickable(next_element)).click()
-shift_tab.perform()
-enter.perform()
+    login_button = driver.find_element(By.XPATH, '//button[text()="Office 365"]')
+    login_button.click()
 
-time.sleep(5)
-driver.quit()
+    acc = account.get_account()
+    email = acc["user"]
+    passwd = acc["password"]
+
+    login(driver, email, passwd)
+
+
+    while 1:
+        update()
+
+
+    driver.quit()
+
+if __name__ == "__main__":
+    main()
