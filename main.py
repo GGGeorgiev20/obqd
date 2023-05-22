@@ -4,7 +4,6 @@ import settings
 import browsers.chrome as chrome
 import browsers.firefox as firefox
 
-import time
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -59,16 +58,17 @@ def order_lunch(driver):
 
 def main():
     URL = "https://menu.codingburgas.bg"
+    
+    acc = account.get_account()
+    email = acc["user"]
+    passwd = acc["password"]
+
     driver = get_browser_driver()
 
     driver.get(URL)
 
     login_button = driver.find_element(By.XPATH, '//button[text()="Office 365"]')
     login_button.click()
-
-    acc = account.get_account()
-    email = acc["user"]
-    passwd = acc["password"]
 
     login(driver, email, passwd)
 
