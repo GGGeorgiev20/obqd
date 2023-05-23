@@ -7,11 +7,14 @@ ACCOUNT_FILE = "account.json"
 ACCOUNT_PATH = os.path.join(ACCOUNT_FOLDER, ACCOUNT_FILE)
 
 def create_account():
-    print("Create account")
+    print("INFO: No account found")
+    print("INFO: Creating account\n")
 
     account = {}
     account["user"] = input("User: ")
     account["password"] = getpass.getpass("Password: ")
+    
+    print("\nINFO: Account created successfully\n")
     
     with open(ACCOUNT_PATH, 'w') as f:
         json.dump(account, f, indent=4)
