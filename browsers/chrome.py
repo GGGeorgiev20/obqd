@@ -5,7 +5,7 @@ def get_driver():
     chrome_options = Options()
     chrome_options.add_argument("--incognito")
 
-    chromedriver_path = "./drivers/chromedriver"
+    chromedriver_path = "../drivers/chromedriver.exe"
 
     driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
     return driver
