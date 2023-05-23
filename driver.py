@@ -19,7 +19,7 @@ DRIVERS = {
 }
 
 def should_download_driver(browser):
-    driver_path = os.path.join(DRIVERS_FOLDER, DRIVERS[browser]['driver'])
+    driver_path = os.path.join(DRIVERS_FOLDER, f"{DRIVERS[browser]['driver'][:-3]}exe")
 
     return not os.path.exists(driver_path)
 
@@ -58,6 +58,3 @@ def setup():
     extract_driver(driver_path, DRIVERS_FOLDER)
 
     os.remove(driver_path)
-
-if __name__ == "__main__":
-    setup()
