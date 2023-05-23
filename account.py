@@ -7,6 +7,8 @@ ACCOUNT_FILE = "account.json"
 ACCOUNT_PATH = os.path.join(ACCOUNT_FOLDER, ACCOUNT_FILE)
 
 def create_account():
+    print("Create account")
+
     account = {}
     account["user"] = input("User: ")
     account["password"] = getpass.getpass("Password: ")
