@@ -16,23 +16,31 @@ def get_preferences():
 
     with open(PREFERENCES_PATH, encoding="utf-8", mode='r') as f:
       preferences = f.read().splitlines()
-    print(preferences)
 
 def compare_dishes(dish1, dish2):
     index1 = preferences.index(dish1)
     index2 = preferences.index(dish2)
 
     if index1 < index2:
-        return 0
-    return 1
-
-def get_menu(menu):
-    return driver.find_element(By.XPATH, f'//label[@for="AvailablePackets_{menu}__Selected"]').text.split("\n4.")[0].split("\n")
+        return dish1
+    return dish2
 
 def get_pick(menu1, menu2):
-    print(menu1)
-    print(menu2)
-    return compare_dishes(menu1[1][3:], menu2[1][3:])
+    menu = compare_dishes(menu1[1], menu2[1]) == menu2[1]
+    return int(menu)
+
+def get_menus():
+    menus = []
+
+    for i in range(2):
+        menu = driver.find_element(By.XPATH, f'//label[@for="AvailablePackets_{i}__Selected"]')
+
+        menu = menu.text.split("\n4.")[0].split("\n")
+        menu = [ i[3:] for i in menu ]
+
+        menus.append(menu)
+
+    return menus
 
 def select_menu(menu):
     driver.find_element(By.XPATH, f'//input[@type="checkbox" and @id="AvailablePackets_{menu}__Selected"]').click()
@@ -52,6 +60,9 @@ def order_lunch(m_driver):
         
         button.click()
 
-        pick = get_pick(get_menu(0),get_menu(1))
-        print(pick)
+        menus = get_menus()
+
+        pick = get_pick(menus[0], menus[1])
+
         select_menu(pick)
+        print(f"INFO: Selected menu {pick + 1}")
