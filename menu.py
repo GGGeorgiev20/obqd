@@ -52,10 +52,10 @@ def order_lunch(m_driver):
     current = 0
     number_of_buttons = 0
 
+    get_menu_settings()
+
     default.setup(driver)
     selection.setup(driver, menu_settings)
-
-    get_menu_settings()
 
     while(True):
         try:
