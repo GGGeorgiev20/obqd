@@ -21,7 +21,7 @@ def get_browser_driver():
     elif browser == "firefox":
         return firefox.get_driver()
     else:
-        raise Exception("Unknown browser!")
+        raise Exception("Unsupported browser!")
 
 def login(m_driver, email, passwd):
     email_element = (By.XPATH, '//input[@type="email" and @name="loginfmt"]')
@@ -65,8 +65,8 @@ def main():
     menu.order_lunch(m_driver)
 
     # uncomment if you want to remove the orders before closing the window
-    # time.sleep(5)
-    # rl.remove_lunch(m_driver)
+    time.sleep(5)
+    rl.remove_lunch(m_driver)
 
     m_driver.quit()
 
