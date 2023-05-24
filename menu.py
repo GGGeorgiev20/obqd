@@ -32,7 +32,7 @@ def get_menu_settings():
     menu_settings = [ menu_settings[key] for key in menu_settings ]
 
 def should_order_menu():
-    default_menu = [ 1, 0, 1, 1, 2 ]
+    default_menu = [ 1, 0, 1, 0, 1, 2 ]
 
     return menu_settings == default_menu
 
