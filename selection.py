@@ -46,6 +46,11 @@ def setup(m_driver, settings):
 def select_items():
     menus = default.get_menus()
     dish = default.compare_dishes(menus[0][1],menus[1][1])
+
+    if dish == -1: 
+        driver.find_element(By.XPATH, '//a[@href="/Reservations"]').click() 
+        return
+
     menu = menus[0][0], dish, menus[0][2]
 
     print(menu)
