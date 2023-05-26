@@ -1,4 +1,6 @@
 import default
+import settings
+
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
@@ -12,6 +14,8 @@ hashtable_template = {
     "bread": "Филия хляб"
 }
 
+current_menu_settings = {}
+
 def default_to_dict(menu, selection):
     hashtable = hashtable_template.copy()
     hashtable["main"] = menu[1]
@@ -19,8 +23,8 @@ def default_to_dict(menu, selection):
 
     if hashtable["main"] == "Кюфте / кебапче с топла гарнитура - 3 бр.":
         hashtable.pop("main")
-        menu_settings["grill"] = 3
-        menu_settings["main"] = 0
+        current_menu_settings["grill"] += 3 * menu_settings["main"]
+        current_menu_settings["main"] = 0
 
     for key, value in hashtable.items():
         hashtable[key] = selection.index(value)
@@ -30,7 +34,7 @@ def default_to_dict(menu, selection):
 def get_selections(dict):
     selections = []
 
-    for key, value in menu_settings.items():
+    for key, value in current_menu_settings.items():
         if value != 0:
             selections.append((dict[key], value))
 
@@ -44,16 +48,11 @@ def setup(m_driver, settings):
     menu_settings = settings
 
 def select_items():
-    menus = default.get_menus()
-    dish = default.compare_dishes(menus[0][1],menus[1][1])
+    global current_menu_settings
+    current_menu_settings = menu_settings.copy()
 
-    if dish == -1: 
-        driver.find_element(By.XPATH, '//a[@href="/Reservations"]').click() 
-        return
-
-    menu = menus[0][0], dish, menus[0][2]
-
-    print(menu)
+    pick = default.get_pick()
+    menu = default.get_menus()[pick]
 
     checkboxes = []
     food_selection = [] 
@@ -67,16 +66,26 @@ def select_items():
         except NoSuchElementException:
             break
 
-    mydict = default_to_dict(menu, food_selection)
-    print(mydict)
-    
-    order_info = get_selections(mydict)
-    print(order_info)
+    menu_dict = default_to_dict(menu, food_selection)
 
-    for index, quantity in order_info: 
+    index_main = -1
+    if pick == -1:
+        index_main = menu_dict["main"]
+        current_menu_settings["grill"] = 3
+
+        if not settings.get_grill_backup():
+            return False
+    
+    order_info = get_selections(menu_dict)
+
+    for index, quantity in order_info:
+        if index == index_main:
+            continue
+        
         checkboxes[index].click()
         count_of_items[index].send_keys(Keys.DELETE)
         count_of_items[index].send_keys(quantity)
 
     driver.find_element(By.XPATH, '//input[@type="submit"]').click()
-    print("Order placed")
+
+    return True

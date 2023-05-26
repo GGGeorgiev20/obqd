@@ -58,6 +58,10 @@ def get_menus():
 
     return menus
 
+def get_pick():
+    menus = get_menus()
+    return pick_menu(menus[0], menus[1])
+
 def select_menu(menu):
     if menu == -1:
         driver.find_element(By.XPATH, '//a[@href="/Reservations"]').click() 

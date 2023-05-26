@@ -38,16 +38,8 @@ def should_order_menu():
         "dessert": 1,
         "bread": 2
     }
+
     return menu_settings == default_menu
-
-def order_menu():
-    menus = default.get_menus()
-
-    pick = default.pick_menu(menus[0], menus[1])
-
-    default.select_menu(pick)
-
-    return pick
 
 def order_lunch(m_driver):
     global driver
@@ -81,12 +73,16 @@ def order_lunch(m_driver):
         except IndexError:
             break
 
-        if should_order_menu():
-            pick = order_menu()
+        pick = default.get_pick()
 
-            if pick == -1:
-                print(f"INFO: No menu for {day} ({date})")
-            else:
-                print(f"INFO: Selected menu {pick + 1} for {day} ({date})")
+        if should_order_menu() and pick != -1:
+            default.select_menu(pick)
+
+            print(f"INFO: Selected menu {pick + 1} for {day} ({date})")
         else:
-            selection.select_items()
+            selected = selection.select_items()
+
+            if selected:
+                print(f"INFO: Selected items for {day} ({date})")
+            else:
+                print(f"INFO: No items selected for {day} ({date})")

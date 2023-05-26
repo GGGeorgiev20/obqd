@@ -12,3 +12,4 @@ def remove_lunch(driver):
         driver.find_element(By.XPATH, '//input[@type="submit" and @value="Анулирай"]').click()
 
         print("INFO: Removed lunch")
+        
