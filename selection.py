@@ -1,7 +1,9 @@
 import default
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.keys import Keys
 
-hashtable = {
+hashtable_template = {
     "tarator": "Таратор",
     "salad": "Салата от пресни зеленчуци",
     "main": "",
@@ -11,8 +13,14 @@ hashtable = {
 }
 
 def default_to_dict(menu, selection):
+    hashtable = hashtable_template.copy()
     hashtable["main"] = menu[1]
     hashtable["dessert"] = menu[2]
+
+    if hashtable["main"] == "Кюфте / кебапче с топла гарнитура - 3 бр.":
+        hashtable.pop("main")
+        menu_settings["grill"] = 3
+        menu_settings["main"] = 0
 
     for key, value in hashtable.items():
         hashtable[key] = selection.index(value)
@@ -42,14 +50,28 @@ def select_items():
 
     print(menu)
 
-    selection = [ "Таратор", "Огретен тиквички", "Мусака", "Салата от пресни зеленчуци", "Кюфте / кебапче", "Плод", "Филия хляб", "Доматена крем супа" ]
+    checkboxes = []
+    food_selection = [] 
+    count_of_items = []
 
-    mydict = default_to_dict(menu, selection)
+    for i in range(0, 8):
+        try:
+            checkboxes.append(driver.find_element(By.XPATH, f'//input[@id="AvailableItems_{i}__Selected"]'))
+            food_selection.append(driver.find_element(By.XPATH, f'//label[@for="AvailableItems_{i}__Selected"]').text)
+            count_of_items.append(driver.find_element(By.XPATH, f'//input[@id="AvailableItems_{i}__Quantity"]'))
+        except NoSuchElementException:
+            break
 
-    print(get_selections(mydict))
+    mydict = default_to_dict(menu, food_selection)
+    print(mydict)
+    
+    order_info = get_selections(mydict)
+    print(order_info)
 
-    # (0, 1) - 1 number of items from index 0
-    # so 1 musaka
-    # (6, 2) - 2 number of items from index 6
-    # so 2 breads
-    # returns an array of tuples
+    for index, quantity in order_info: 
+        checkboxes[index].click()
+        count_of_items[index].send_keys(Keys.DELETE)
+        count_of_items[index].send_keys(quantity)
+
+    driver.find_element(By.XPATH, '//input[@type="submit"]').click()
+    print("Order placed")

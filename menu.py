@@ -90,4 +90,3 @@ def order_lunch(m_driver):
                 print(f"INFO: Selected menu {pick + 1} for {day} ({date})")
         else:
             selection.select_items()
-            pass
