@@ -1,9 +1,8 @@
 import account
-import time 
 import settings
 import driver
 import menu
-import rl 
+
 import browsers.chrome as chrome
 import browsers.firefox as firefox
 
@@ -63,12 +62,6 @@ def main():
     login(m_driver, email, passwd)
 
     menu.order_lunch(m_driver)
-
-    # uncomment if you want to remove the orders before closing the window
-    time.sleep(5)
-    rl.remove_lunch(m_driver)
-
-    m_driver.quit()
 
 if __name__ == "__main__":
     main()
