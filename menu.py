@@ -28,12 +28,16 @@ def get_menu_settings():
     
     with open(MENU_PATH, 'r') as f:
         menu_settings = json.load(f)
-    
-    menu_settings = [ menu_settings[key] for key in menu_settings ]
 
 def should_order_menu():
-    default_menu = [ 1, 0, 1, 0, 1, 2 ]
-
+    default_menu = {
+        "tarator": 1,
+        "salad": 0,
+        "main": 1,
+        "grill": 0,
+        "dessert": 1,
+        "bread": 2
+    }
     return menu_settings == default_menu
 
 def order_menu():
@@ -85,5 +89,5 @@ def order_lunch(m_driver):
             else:
                 print(f"INFO: Selected menu {pick + 1} for {day} ({date})")
         else:
-            # todo: svobodna konsumaciq
+            selection.select_items()
             pass

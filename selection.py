@@ -1,5 +1,4 @@
-import os
-
+import default
 from selenium.webdriver.common.by import By
 
 hashtable = {
@@ -11,9 +10,9 @@ hashtable = {
     "bread": "Филия хляб"
 }
 
-def default_to_dict(default, selection):
-    hashtable["main"] = default[1]
-    hashtable["dessert"] = default[2]
+def default_to_dict(menu, selection):
+    hashtable["main"] = menu[1]
+    hashtable["dessert"] = menu[2]
 
     for key, value in hashtable.items():
         hashtable[key] = selection.index(value)
@@ -36,21 +35,16 @@ def setup(m_driver, settings):
     global menu_settings
     menu_settings = settings
 
-def main():
-    default = [ "Таратор", "Мусака", "Плод" ]
-    selection = [ "Таратор", "Огретен Тиквички", "Мусака", "Салата от пресни зеленчуци", "Кюфте / кебапче", "Плод", "Филия хляб", "Доматена крем супа" ]
-    settings = {
-        "tarator": 1,
-        "salad": 0,
-        "main": 1,
-        "grill": 0,
-        "dessert": 1,
-        "bread": 2
-    }
+def select_items():
+    menus = default.get_menus()
+    dish = default.compare_dishes(menus[0][1],menus[1][1])
+    menu = menus[0][0], dish, menus[0][2]
 
-    setup(None, settings)
+    print(menu)
 
-    mydict = default_to_dict(default, selection)
+    selection = [ "Таратор", "Огретен тиквички", "Мусака", "Салата от пресни зеленчуци", "Кюфте / кебапче", "Плод", "Филия хляб", "Доматена крем супа" ]
+
+    mydict = default_to_dict(menu, selection)
 
     print(get_selections(mydict))
 
@@ -59,6 +53,3 @@ def main():
     # (6, 2) - 2 number of items from index 6
     # so 2 breads
     # returns an array of tuples
-
-if __name__ == "__main__":
-    main()
