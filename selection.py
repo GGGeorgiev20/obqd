@@ -71,9 +71,11 @@ def select_items():
     index_main = -1
     if pick == -1:
         index_main = menu_dict["main"]
-        current_menu_settings["grill"] = 3
+        grill_backup = settings.get_grill_backup()
 
-        if not settings.get_grill_backup():
+        current_menu_settings["grill"] = grill_backup
+
+        if grill_backup == 0:
             return False
     
     order_info = get_selections(menu_dict)

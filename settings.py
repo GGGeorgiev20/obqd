@@ -17,4 +17,4 @@ def get_browser():
 
 def get_grill_backup():
     settings = get_settings()
-    return bool(settings['grill_backup'])
+    return settings['grill_backup']
